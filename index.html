@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Body Workout</title>
+<style>
+  :root{
+    --bg-1:#0a0e14;
+    --bg-2:#0f1420;
+    --glass:rgba(255,255,255,0.05);
+    --glass-border:rgba(255,255,255,0.09);
+    --ink:#eef1f6;
+    --muted:#8b93a7;
+    --accent:#7dd3fc;
+    --accent-2:#f472b6;
+    --push:#fb7185;
+    --pull:#34d399;
+    --legs:#60a5fa;
+    --core:#c084fc;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    min-height:100vh;
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;
+    line-height:1.5;
+    padding:56px 20px 90px;
+    background:
+      radial-gradient(circle at 12% -10%, rgba(125,211,252,.16), transparent 40%),
+      radial-gradient(circle at 90% 0%, rgba(244,114,182,.14), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(52,211,153,.08), transparent 50%),
+      linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    background-attachment:fixed;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .kicker{
+    text-transform:uppercase;
+    letter-spacing:.32em;
+    font-size:11px;
+    font-weight:700;
+    color:var(--accent);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+  }
+  .kicker::before{content:"";width:34px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:inline-block;border-radius:2px;}
+
+  h1{
+    font-size:clamp(38px,7.5vw,62px);
+    line-height:1.02;
+    font-weight:800;
+    letter-spacing:-.02em;
+    margin-bottom:18px;
+    background:linear-gradient(120deg,#fff 20%,var(--accent) 60%,var(--accent-2) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .sub{
+    color:var(--muted);
+    font-size:14px;
+    display:flex;flex-wrap:wrap;gap:10px;
+    margin-bottom:34px;
+  }
+  .sub span{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    padding:7px 14px;
+    border-radius:999px;
+  }
+  .sub b{color:var(--ink);font-weight:700;}
+
+  .list{display:flex;flex-direction:column;gap:14px;}
+  .ex{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-radius:18px;
+    padding:20px 22px;
+    display:grid;
+    grid-template-columns:52px 1fr auto;
+    align-items:center;
+    gap:18px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 8px 30px -20px rgba(0,0,0,.6);
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .ex::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:var(--tag,#ccc);
+    box-shadow:0 0 16px var(--tag,#ccc);
+  }
+  .ex:hover{
+    transform:translateY(-3px);
+    box-shadow:0 16px 40px -18px rgba(0,0,0,.7);
+    border-color:rgba(255,255,255,.18);
+  }
+  .num{
+    font-weight:800;
+    font-size:20px;
+    width:48px;height:48px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--glass-border);
+    color:var(--ink);
+  }
+  .mid .name{font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
+  .mid .tag{
+    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
+    color:var(--tag);
+    margin-top:6px;display:inline-block;
+  }
+  .stats{text-align:right;}
+  .stats .reps{font-size:16px;font-weight:700;white-space:nowrap;}
+  .stats .wt{font-size:12.5px;color:var(--muted);margin-top:3px;white-space:nowrap;}
+
+  .legend{
+    display:flex;flex-wrap:wrap;gap:16px;
+    margin-top:34px;padding-top:24px;
+    border-top:1px solid var(--glass-border);
+    font-size:12px;color:var(--muted);
+  }
+  .legend span{display:flex;align-items:center;gap:7px;}
+  .dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 8px currentColor;}
+
+  .note{
+    margin-top:22px;
+    font-size:12.5px;color:var(--muted);line-height:1.7;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    padding:16px 18px;
+    border-radius:14px;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:50px;
+    font-size:11.5px;
+    color:rgba(139,147,167,.6);
+    letter-spacing:.04em;
+  }
+
+  @media(max-width:520px){
+    .ex{grid-template-columns:44px 1fr;grid-template-rows:auto auto;gap:6px 14px;padding:16px 18px;}
+    .num{width:42px;height:42px;font-size:18px;}
+    .stats{grid-column:2;text-align:left;margin-top:4px;}
+    .stats .reps,.stats .wt{white-space:normal;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Strength &amp; Conditioning</div>
+  <h1>Full Body Workout</h1>
+  <div class="sub">
+    <span><b>9</b> exercises</span>
+    <span><b>2</b> sets each</span>
+    <span>Beginner-friendly · machine-focused</span>
+    <span>Est. <b>35–45 min</b></span>
+  </div>
+
+  <div class="list">
+    <div class="ex" style="--tag:var(--legs)">
+      <div class="num">1</div>
+      <div class="mid"><div class="name">Leg Press</div><span class="tag">Legs</span></div>
+      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~70–90 lb</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--push)">
+      <div class="num">2</div>
+      <div class="mid"><div class="name">Machine Chest Press</div><span class="tag">Push</span></div>
+      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~30 lb</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--pull)">
+      <div class="num">3</div>
+      <div class="mid"><div class="name">Seated Row</div><span class="tag">Pull</span></div>
+      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~40 lb</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--legs)">
+      <div class="num">4</div>
+      <div class="mid"><div class="name">Leg Curl</div><span class="tag">Legs</span></div>
+      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~30 lb</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--pull)">
+      <div class="num">5</div>
+      <div class="mid"><div class="name">Lat Pulldown</div><span class="tag">Pull</span></div>
+      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~30–40 lb</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--push)">
+      <div class="num">6</div>
+      <div class="mid"><div class="name">Dumbbell Lateral Raise</div><span class="tag">Shoulders</span></div>
+      <div class="stats"><div class="reps">2 × 10–15</div><div class="wt">5 lb each</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--pull)">
+      <div class="num">7</div>
+      <div class="mid"><div class="name">Rear-Delt Fly Machine</div><span class="tag">Shoulders</span></div>
+      <div class="stats"><div class="reps">2 × 10–15</div><div class="wt">~15–25 lb</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--core)">
+      <div class="num">8</div>
+      <div class="mid"><div class="name">Farmer Carry</div><span class="tag">Core / Grip</span></div>
+      <div class="stats"><div class="reps">2 × 20–30 sec</div><div class="wt">~15–20 lb each</div></div>
+    </div>
+    <div class="ex" style="--tag:var(--core)">
+      <div class="num">9</div>
+      <div class="mid"><div class="name">Plank</div><span class="tag">Core</span></div>
+      <div class="stats"><div class="reps">2 × 20–30 sec</div><div class="wt">Bodyweight</div></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--legs);color:var(--legs)"></span>Legs</span>
+    <span><span class="dot" style="background:var(--push);color:var(--push)"></span>Push</span>
+    <span><span class="dot" style="background:var(--pull);color:var(--pull)"></span>Pull</span>
+    <span><span class="dot" style="background:var(--core);color:var(--core)"></span>Core &amp; grip</span>
+  </div>
+
+  <p class="note">Rest 60–90 seconds between sets. When you can finish the top of the rep range with good form on both sets, bump the weight up a notch next time.</p>
+
+  <footer>Full Body Workout</footer>
+</div>
+</body>
+</html>
