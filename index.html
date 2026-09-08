@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Full Body Workout</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237dd3fc'/%3E%3Cstop offset='1' stop-color='%23f472b6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%230f1420'/%3E%3Cg stroke='url(%23g)' stroke-width='9' stroke-linecap='round'%3E%3Cline x1='20' y1='50' x2='80' y2='50'/%3E%3Cline x1='20' y1='36' x2='20' y2='64'/%3E%3Cline x1='80' y1='36' x2='80' y2='64'/%3E%3Cline x1='10' y1='42' x2='10' y2='58'/%3E%3Cline x1='90' y1='42' x2='90' y2='58'/%3E%3C/g%3E%3C/svg%3E">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1420">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Workout">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
 <style>
   :root{
     --bg-1:#0a0e14;
@@ -19,6 +28,7 @@
     --pull:#34d399;
     --legs:#60a5fa;
     --core:#c084fc;
+    --good:#34d399;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
@@ -49,32 +59,61 @@
   .kicker::before{content:"";width:34px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2));display:inline-block;border-radius:2px;}
 
   h1{
-    font-size:clamp(38px,7.5vw,62px);
+    font-size:clamp(34px,7vw,54px);
     line-height:1.02;
     font-weight:800;
     letter-spacing:-.02em;
-    margin-bottom:18px;
+    margin-bottom:14px;
     background:linear-gradient(120deg,#fff 20%,var(--accent) 60%,var(--accent-2) 100%);
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
   }
 
-  .sub{
-    color:var(--muted);
-    font-size:14px;
-    display:flex;flex-wrap:wrap;gap:10px;
-    margin-bottom:34px;
-  }
-  .sub span{
+  .lede{color:var(--muted);font-size:13.5px;max-width:56ch;margin-bottom:26px;}
+
+  /* Day tabs */
+  .days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
+  .day-btn{
+    flex:1;min-width:74px;
     background:var(--glass);
     border:1px solid var(--glass-border);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    padding:7px 14px;
-    border-radius:999px;
+    color:var(--muted);
+    font:inherit;font-size:12.5px;font-weight:700;
+    padding:10px 8px;border-radius:12px;
+    cursor:pointer;
+    text-align:center;
+    transition:all .15s ease;
+    backdrop-filter:blur(10px);
   }
-  .sub b{color:var(--ink);font-weight:700;}
+  .day-btn .d{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;margin-bottom:2px;}
+  .day-btn.active{
+    color:var(--ink);
+    border-color:rgba(125,211,252,.5);
+    background:linear-gradient(135deg, rgba(125,211,252,.18), rgba(244,114,182,.14));
+    box-shadow:0 0 20px -6px rgba(125,211,252,.4);
+  }
+
+  /* Mode toggle */
+  .modes{display:flex;gap:8px;margin-bottom:26px;}
+  .mode-btn{
+    background:transparent;
+    border:1px solid var(--glass-border);
+    color:var(--muted);
+    font:inherit;font-size:13px;font-weight:700;
+    padding:9px 16px;border-radius:999px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .mode-btn.active{
+    color:var(--bg-1);
+    background:linear-gradient(120deg,var(--accent),var(--accent-2));
+    border-color:transparent;
+  }
+
+  .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .day-head h2{font-size:22px;font-weight:800;letter-spacing:-.01em;}
+  .day-head .meta{color:var(--muted);font-size:12.5px;}
 
   .list{display:flex;flex-direction:column;gap:14px;}
   .ex{
@@ -84,10 +123,6 @@
     -webkit-backdrop-filter:blur(18px);
     border-radius:18px;
     padding:20px 22px;
-    display:grid;
-    grid-template-columns:52px 1fr auto;
-    align-items:center;
-    gap:18px;
     position:relative;
     overflow:hidden;
     box-shadow:0 8px 30px -20px rgba(0,0,0,.6);
@@ -99,33 +134,108 @@
     box-shadow:0 0 16px var(--tag,#ccc);
   }
   .ex:hover{
-    transform:translateY(-3px);
+    transform:translateY(-2px);
     box-shadow:0 16px 40px -18px rgba(0,0,0,.7);
     border-color:rgba(255,255,255,.18);
   }
+  .ex-top{
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    align-items:center;
+    gap:16px;
+  }
   .num{
     font-weight:800;
-    font-size:20px;
-    width:48px;height:48px;
+    font-size:18px;
+    width:44px;height:44px;
     display:flex;align-items:center;justify-content:center;
-    border-radius:14px;
+    border-radius:13px;
     background:rgba(255,255,255,0.04);
     border:1px solid var(--glass-border);
     color:var(--ink);
+    flex-shrink:0;
   }
-  .mid .name{font-size:19px;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
+  .mid .name{font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
   .mid .tag{
     font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
     color:var(--tag);
-    margin-top:6px;display:inline-block;
+    margin-top:5px;display:inline-block;
   }
   .stats{text-align:right;}
-  .stats .reps{font-size:16px;font-weight:700;white-space:nowrap;}
-  .stats .wt{font-size:12.5px;color:var(--muted);margin-top:3px;white-space:nowrap;}
+  .stats .reps{font-size:15px;font-weight:700;white-space:nowrap;}
+  .stats .wt{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;}
+
+  /* Track mode extras */
+  .track-row{
+    margin-top:16px;padding-top:16px;
+    border-top:1px solid var(--glass-border);
+    display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+  }
+  .sets{display:flex;gap:8px;}
+  .set-box{
+    width:38px;height:38px;
+    border-radius:11px;
+    border:1px solid var(--glass-border);
+    background:rgba(255,255,255,.03);
+    color:var(--muted);
+    font:inherit;font-weight:700;font-size:13px;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s ease;
+  }
+  .set-box.done{
+    background:var(--good);
+    border-color:var(--good);
+    color:#06251a;
+    box-shadow:0 0 14px -2px rgba(52,211,153,.7);
+  }
+  .weight-field{display:flex;align-items:center;gap:8px;margin-left:auto;}
+  .weight-field label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+  .weight-field input{
+    width:64px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--glass-border);
+    border-radius:9px;
+    color:var(--ink);
+    font:inherit;font-size:13px;font-weight:700;
+    padding:7px 8px;
+    text-align:center;
+  }
+  .weight-field input:focus{outline:none;border-color:var(--accent);}
+
+  /* Progress + timer bar */
+  .progress-bar{
+    position:sticky;top:0;z-index:10;
+    display:flex;align-items:center;gap:14px;
+    background:rgba(10,14,20,.75);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-radius:16px;
+    padding:12px 16px;
+    margin-bottom:20px;
+  }
+  .progress-track{flex:1;height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s ease;}
+  .progress-label{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;}
+  .timer-btn{
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    color:var(--ink);
+    font:inherit;font-size:12.5px;font-weight:700;
+    padding:9px 14px;border-radius:12px;
+    cursor:pointer;white-space:nowrap;
+    display:flex;align-items:center;gap:6px;
+  }
+  .timer-btn.running{
+    color:var(--bg-1);
+    background:linear-gradient(120deg,var(--accent),var(--accent-2));
+    border-color:transparent;
+  }
 
   .legend{
     display:flex;flex-wrap:wrap;gap:16px;
-    margin-top:34px;padding-top:24px;
+    margin-top:30px;padding-top:22px;
     border-top:1px solid var(--glass-border);
     font-size:12px;color:var(--muted);
   }
@@ -152,71 +262,35 @@
   }
 
   @media(max-width:520px){
-    .ex{grid-template-columns:44px 1fr;grid-template-rows:auto auto;gap:6px 14px;padding:16px 18px;}
-    .num{width:42px;height:42px;font-size:18px;}
-    .stats{grid-column:2;text-align:left;margin-top:4px;}
-    .stats .reps,.stats .wt{white-space:normal;}
+    .weight-field{margin-left:0;}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="kicker">Strength &amp; Conditioning</div>
-  <h1>Full Body Workout</h1>
-  <div class="sub">
-    <span><b>9</b> exercises</span>
-    <span><b>2</b> sets each</span>
-    <span>Beginner-friendly · machine-focused</span>
-    <span>Est. <b>35–45 min</b></span>
+  <h1>Full Body Split</h1>
+  <p class="lede">Same weekly volume as the old 3-day plan (27 sets total), just spread across five short 15–25 min sessions so it's easier to show up every day.</p>
+
+  <div class="days" id="days"></div>
+
+  <div class="modes">
+    <button class="mode-btn active" data-mode="overview">Overview</button>
+    <button class="mode-btn" data-mode="track">Track Workout</button>
   </div>
 
-  <div class="list">
-    <div class="ex" style="--tag:var(--legs)">
-      <div class="num">1</div>
-      <div class="mid"><div class="name">Leg Press</div><span class="tag">Legs</span></div>
-      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~70–90 lb</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--push)">
-      <div class="num">2</div>
-      <div class="mid"><div class="name">Machine Chest Press</div><span class="tag">Push</span></div>
-      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~30 lb</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--pull)">
-      <div class="num">3</div>
-      <div class="mid"><div class="name">Seated Row</div><span class="tag">Pull</span></div>
-      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~40 lb</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--legs)">
-      <div class="num">4</div>
-      <div class="mid"><div class="name">Leg Curl</div><span class="tag">Legs</span></div>
-      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~30 lb</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--pull)">
-      <div class="num">5</div>
-      <div class="mid"><div class="name">Lat Pulldown</div><span class="tag">Pull</span></div>
-      <div class="stats"><div class="reps">2 × 8–12</div><div class="wt">~30–40 lb</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--push)">
-      <div class="num">6</div>
-      <div class="mid"><div class="name">Dumbbell Lateral Raise</div><span class="tag">Shoulders</span></div>
-      <div class="stats"><div class="reps">2 × 10–15</div><div class="wt">5 lb each</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--pull)">
-      <div class="num">7</div>
-      <div class="mid"><div class="name">Rear-Delt Fly Machine</div><span class="tag">Shoulders</span></div>
-      <div class="stats"><div class="reps">2 × 10–15</div><div class="wt">~15–25 lb</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--core)">
-      <div class="num">8</div>
-      <div class="mid"><div class="name">Farmer Carry</div><span class="tag">Core / Grip</span></div>
-      <div class="stats"><div class="reps">2 × 20–30 sec</div><div class="wt">~15–20 lb each</div></div>
-    </div>
-    <div class="ex" style="--tag:var(--core)">
-      <div class="num">9</div>
-      <div class="mid"><div class="name">Plank</div><span class="tag">Core</span></div>
-      <div class="stats"><div class="reps">2 × 20–30 sec</div><div class="wt">Bodyweight</div></div>
-    </div>
+  <div id="progressBar" class="progress-bar" style="display:none">
+    <div class="progress-label" id="progressLabel">0 / 0 sets</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <button class="timer-btn" id="timerBtn">⏱ Rest</button>
   </div>
+
+  <div class="day-head">
+    <h2 id="dayTitle">—</h2>
+    <span class="meta" id="dayMeta"></span>
+  </div>
+
+  <div class="list" id="list"></div>
 
   <div class="legend">
     <span><span class="dot" style="background:var(--legs);color:var(--legs)"></span>Legs</span>
@@ -225,9 +299,233 @@
     <span><span class="dot" style="background:var(--core);color:var(--core)"></span>Core &amp; grip</span>
   </div>
 
-  <p class="note">Rest 60–90 seconds between sets. When you can finish the top of the rep range with good form on both sets, bump the weight up a notch next time.</p>
+  <p class="note">Rest 60–90 seconds between sets. In <b>Track</b> mode, tap a set box after finishing it and hit <b>⏱ Rest</b> to start a countdown. When you can hit the top of a rep range with good form on every set, bump the weight up next time.</p>
 
-  <footer>Full Body Workout</footer>
+  <footer>Full Body Workout · 5-Day Split</footer>
 </div>
+
+<script>
+const PLAN = [
+  { day:"Mon", full:"Monday", title:"Legs + Core", exercises:[
+    { name:"Leg Press", tag:"Legs", sets:3, reps:"8–12", weight:"~70–90 lb" },
+    { name:"Leg Curl", tag:"Legs", sets:3, reps:"8–12", weight:"~30 lb" },
+    { name:"Plank", tag:"Core", sets:2, reps:"20–30 sec", weight:"Bodyweight" },
+  ]},
+  { day:"Tue", full:"Tuesday", title:"Push", exercises:[
+    { name:"Machine Chest Press", tag:"Push", sets:3, reps:"8–12", weight:"~30 lb" },
+    { name:"Dumbbell Lateral Raise", tag:"Shoulders", sets:3, reps:"10–15", weight:"5 lb each" },
+    { name:"Farmer Carry", tag:"Core / Grip", sets:2, reps:"20–30 sec", weight:"~15–20 lb each" },
+  ]},
+  { day:"Wed", full:"Wednesday", title:"Pull", exercises:[
+    { name:"Lat Pulldown", tag:"Pull", sets:3, reps:"8–12", weight:"~30–40 lb" },
+    { name:"Seated Row", tag:"Pull", sets:3, reps:"8–12", weight:"~40 lb" },
+    { name:"Rear-Delt Fly Machine", tag:"Shoulders", sets:3, reps:"10–15", weight:"~15–25 lb" },
+  ]},
+  { day:"Thu", full:"Thursday", title:"Legs + Push", exercises:[
+    { name:"Leg Press", tag:"Legs", sets:3, reps:"8–12", weight:"~70–90 lb" },
+    { name:"Leg Curl", tag:"Legs", sets:3, reps:"8–12", weight:"~30 lb" },
+    { name:"Machine Chest Press", tag:"Push", sets:3, reps:"8–12", weight:"~30 lb" },
+    { name:"Plank", tag:"Core", sets:2, reps:"20–30 sec", weight:"Bodyweight" },
+  ]},
+  { day:"Fri", full:"Friday", title:"Pull + Shoulders", exercises:[
+    { name:"Lat Pulldown", tag:"Pull", sets:3, reps:"8–12", weight:"~30–40 lb" },
+    { name:"Seated Row", tag:"Pull", sets:3, reps:"8–12", weight:"~40 lb" },
+    { name:"Rear-Delt Fly Machine", tag:"Shoulders", sets:3, reps:"10–15", weight:"~15–25 lb" },
+    { name:"Dumbbell Lateral Raise", tag:"Shoulders", sets:3, reps:"10–15", weight:"5 lb each" },
+    { name:"Farmer Carry", tag:"Core / Grip", sets:2, reps:"20–30 sec", weight:"~15–20 lb each" },
+  ]},
+];
+
+const TAG_VAR = {
+  "Legs":"--legs", "Push":"--push", "Pull":"--pull",
+  "Shoulders":"--pull", "Core":"--core", "Core / Grip":"--core"
+};
+
+let activeDayIdx = new Date().getDay() >= 1 && new Date().getDay() <= 5 ? new Date().getDay() - 1 : 0;
+let mode = "overview";
+
+const daysEl = document.getElementById("days");
+const listEl = document.getElementById("list");
+const dayTitleEl = document.getElementById("dayTitle");
+const dayMetaEl = document.getElementById("dayMeta");
+const progressBar = document.getElementById("progressBar");
+const progressFill = document.getElementById("progressFill");
+const progressLabel = document.getElementById("progressLabel");
+const timerBtn = document.getElementById("timerBtn");
+
+function todayKey(dayCode){
+  const d = new Date();
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return `track:${monday.toISOString().slice(0,10)}:${dayCode}`;
+}
+function weightKey(dayCode, exName){ return `weight:${dayCode}:${exName}`; }
+
+// In-memory cache is the source of truth; localStorage is best-effort persistence
+// (fails silently in private browsing / sandboxed origins).
+const trackCache = {};
+const weightCache = {};
+
+function loadTrack(dayCode){
+  const key = todayKey(dayCode);
+  if(!(key in trackCache)){
+    let parsed = {};
+    try{ parsed = JSON.parse(localStorage.getItem(key) || "{}"); }catch(e){}
+    trackCache[key] = parsed;
+  }
+  return trackCache[key];
+}
+function saveTrack(dayCode, data){
+  const key = todayKey(dayCode);
+  trackCache[key] = data;
+  try{ localStorage.setItem(key, JSON.stringify(data)); }catch(e){}
+}
+function loadWeight(dayCode, exName, fallback){
+  const key = weightKey(dayCode, exName);
+  if(!(key in weightCache)){
+    let val = fallback;
+    try{ val = localStorage.getItem(key) || fallback; }catch(e){}
+    weightCache[key] = val;
+  }
+  return weightCache[key];
+}
+function saveWeight(dayCode, exName, val){
+  const key = weightKey(dayCode, exName);
+  weightCache[key] = val;
+  try{ localStorage.setItem(key, val); }catch(e){}
+}
+
+function renderDayTabs(){
+  daysEl.innerHTML = "";
+  PLAN.forEach((d, i) => {
+    const btn = document.createElement("button");
+    btn.className = "day-btn" + (i === activeDayIdx ? " active" : "");
+    btn.innerHTML = `<span class="d">${d.day}</span>${d.title}`;
+    btn.onclick = () => { activeDayIdx = i; render(); };
+    daysEl.appendChild(btn);
+  });
+}
+
+function render(){
+  renderDayTabs();
+  const day = PLAN[activeDayIdx];
+  dayTitleEl.textContent = `${day.full} · ${day.title}`;
+  const totalSets = day.exercises.reduce((a,e) => a + e.sets, 0);
+  dayMetaEl.textContent = `${day.exercises.length} exercises · ${totalSets} sets · ~15–25 min`;
+
+  listEl.innerHTML = "";
+  const track = mode === "track" ? loadTrack(day.day) : null;
+
+  day.exercises.forEach((ex, i) => {
+    const card = document.createElement("div");
+    card.className = "ex";
+    card.style.setProperty("--tag", `var(${TAG_VAR[ex.tag] || "--core"})`);
+
+    const top = document.createElement("div");
+    top.className = "ex-top";
+    top.innerHTML = `
+      <div class="num">${i+1}</div>
+      <div class="mid"><div class="name">${ex.name}</div><span class="tag">${ex.tag}</span></div>
+      <div class="stats"><div class="reps">${ex.sets} × ${ex.reps}</div><div class="wt">${ex.weight}</div></div>
+    `;
+    card.appendChild(top);
+
+    if(mode === "track"){
+      const row = document.createElement("div");
+      row.className = "track-row";
+
+      const sets = document.createElement("div");
+      sets.className = "sets";
+      const exKey = ex.name;
+      const done = track[exKey] || [];
+      for(let s=0; s<ex.sets; s++){
+        const box = document.createElement("button");
+        box.className = "set-box" + (done[s] ? " done" : "");
+        box.textContent = s+1;
+        box.onclick = () => {
+          const t = loadTrack(day.day);
+          const arr = t[exKey] || [];
+          arr[s] = !arr[s];
+          t[exKey] = arr;
+          saveTrack(day.day, t);
+          render();
+        };
+        sets.appendChild(box);
+      }
+      row.appendChild(sets);
+
+      const wf = document.createElement("div");
+      wf.className = "weight-field";
+      wf.innerHTML = `<label>lb</label>`;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.inputMode = "decimal";
+      input.value = loadWeight(day.day, ex.name, ex.weight.replace(/[^0-9.–-]/g,"") || "");
+      input.oninput = () => saveWeight(day.day, ex.name, input.value);
+      wf.appendChild(input);
+      row.appendChild(wf);
+
+      card.appendChild(row);
+    }
+
+    listEl.appendChild(card);
+  });
+
+  if(mode === "track"){
+    progressBar.style.display = "flex";
+    let doneCount = 0;
+    day.exercises.forEach(ex => {
+      const arr = track[ex.name] || [];
+      doneCount += arr.filter(Boolean).length;
+    });
+    progressLabel.textContent = `${doneCount} / ${totalSets} sets`;
+    progressFill.style.width = totalSets ? `${(doneCount/totalSets)*100}%` : "0%";
+  } else {
+    progressBar.style.display = "none";
+  }
+}
+
+document.querySelectorAll(".mode-btn").forEach(btn => {
+  btn.onclick = () => {
+    mode = btn.dataset.mode;
+    document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b === btn));
+    render();
+  };
+});
+
+let timerInterval = null;
+timerBtn.onclick = () => {
+  if(timerInterval){
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerBtn.textContent = "⏱ Rest";
+    timerBtn.classList.remove("running");
+    return;
+  }
+  let remaining = 75;
+  timerBtn.classList.add("running");
+  timerBtn.textContent = `⏱ ${remaining}s`;
+  timerInterval = setInterval(() => {
+    remaining--;
+    if(remaining <= 0){
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerBtn.textContent = "⏱ Rest";
+      timerBtn.classList.remove("running");
+      if(navigator.vibrate) navigator.vibrate([120,60,120]);
+      return;
+    }
+    timerBtn.textContent = `⏱ ${remaining}s`;
+  }, 1000);
+};
+
+render();
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+</script>
 </body>
 </html>
