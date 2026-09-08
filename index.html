@@ -70,7 +70,34 @@
     color:transparent;
   }
 
-  .lede{color:var(--muted);font-size:13.5px;max-width:56ch;margin-bottom:26px;}
+  .lede{color:var(--muted);font-size:13.5px;max-width:56ch;margin-bottom:22px;}
+
+  /* Streak */
+  .streak{
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:24px;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-radius:14px;
+    padding:12px 16px;
+  }
+  .streak-label{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+  .streak-dots{display:flex;gap:8px;flex:1;}
+  .streak-dot{
+    flex:1;height:8px;border-radius:999px;
+    background:rgba(255,255,255,.08);
+    position:relative;
+    overflow:hidden;
+  }
+  .streak-dot::after{
+    content:"";position:absolute;left:0;top:0;bottom:0;
+    width:var(--fill,0%);
+    background:linear-gradient(90deg,var(--accent),var(--good));
+    border-radius:999px;
+  }
+  .streak-dot.today{box-shadow:0 0 0 2px rgba(125,211,252,.5);}
 
   /* Day tabs */
   .days{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
@@ -94,8 +121,8 @@
     box-shadow:0 0 20px -6px rgba(125,211,252,.4);
   }
 
-  /* Mode toggle */
-  .modes{display:flex;gap:8px;margin-bottom:26px;}
+  /* Mode toggle + export */
+  .modes{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
   .mode-btn{
     background:transparent;
     border:1px solid var(--glass-border);
@@ -110,6 +137,44 @@
     background:linear-gradient(120deg,var(--accent),var(--accent-2));
     border-color:transparent;
   }
+  .export-btn{
+    margin-left:auto;
+    background:transparent;
+    border:1px solid var(--glass-border);
+    color:var(--muted);
+    font:inherit;font-size:12.5px;font-weight:700;
+    padding:9px 14px;border-radius:999px;
+    cursor:pointer;
+  }
+  .export-btn:hover{color:var(--ink);border-color:rgba(255,255,255,.2);}
+
+  .export-panel{
+    display:none;
+    margin-bottom:20px;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    padding:16px;
+    backdrop-filter:blur(16px);
+  }
+  .export-panel.open{display:block;}
+  .export-panel textarea{
+    width:100%;height:180px;resize:vertical;
+    background:rgba(0,0,0,.25);
+    border:1px solid var(--glass-border);
+    border-radius:10px;
+    color:var(--ink);
+    font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;
+    padding:12px;margin-bottom:10px;
+  }
+  .export-actions{display:flex;gap:10px;align-items:center;}
+  .copy-btn{
+    background:linear-gradient(120deg,var(--accent),var(--accent-2));
+    border:none;color:var(--bg-1);
+    font:inherit;font-size:13px;font-weight:700;
+    padding:9px 16px;border-radius:10px;cursor:pointer;
+  }
+  .copy-status{font-size:12px;color:var(--good);font-weight:700;}
 
   .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
   .day-head h2{font-size:22px;font-weight:800;letter-spacing:-.01em;}
@@ -155,15 +220,47 @@
     color:var(--ink);
     flex-shrink:0;
   }
+  .mid{display:flex;flex-direction:column;min-width:0;}
+  .mid .name-row{display:flex;align-items:center;gap:8px;}
   .mid .name{font-size:18px;font-weight:700;letter-spacing:-.01em;line-height:1.2;}
   .mid .tag{
     font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;
     color:var(--tag);
     margin-top:5px;display:inline-block;
   }
+  .info-btn{
+    flex-shrink:0;
+    width:20px;height:20px;border-radius:50%;
+    background:rgba(255,255,255,.06);
+    border:1px solid var(--glass-border);
+    color:var(--muted);
+    font-size:11px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .info-btn.open{color:var(--bg-1);background:var(--accent);border-color:transparent;}
   .stats{text-align:right;}
   .stats .reps{font-size:15px;font-weight:700;white-space:nowrap;}
   .stats .wt{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap;}
+
+  .cues{
+    display:none;
+    margin-top:14px;padding:12px 14px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--glass-border);
+    border-radius:12px;
+    font-size:12.5px;color:var(--muted);
+    line-height:1.6;
+  }
+  .cues.open{display:block;}
+  .cues li{margin-left:16px;}
+
+  .last-time{
+    margin-top:14px;
+    font-size:11.5px;color:var(--muted);
+    display:flex;align-items:center;gap:6px;
+  }
+  .last-time b{color:var(--accent);font-weight:700;}
 
   /* Track mode extras */
   .track-row{
@@ -189,24 +286,36 @@
     color:#06251a;
     box-shadow:0 0 14px -2px rgba(52,211,153,.7);
   }
-  .weight-field{display:flex;align-items:center;gap:8px;margin-left:auto;}
-  .weight-field label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+  .weight-field{display:flex;align-items:center;gap:6px;margin-left:auto;}
+  .weight-field label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-right:2px;}
   .weight-field input{
-    width:64px;
+    width:56px;
     background:rgba(255,255,255,.04);
     border:1px solid var(--glass-border);
     border-radius:9px;
     color:var(--ink);
     font:inherit;font-size:13px;font-weight:700;
-    padding:7px 8px;
+    padding:7px 4px;
     text-align:center;
   }
   .weight-field input:focus{outline:none;border-color:var(--accent);}
+  .step-btn{
+    width:30px;height:30px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--glass-border);
+    border-radius:9px;
+    color:var(--ink);
+    font:inherit;font-size:16px;font-weight:700;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    line-height:1;
+  }
+  .step-btn:active{background:rgba(255,255,255,.1);}
 
   /* Progress + timer bar */
   .progress-bar{
     position:sticky;top:0;z-index:10;
-    display:flex;align-items:center;gap:14px;
+    display:flex;align-items:center;gap:12px;
     background:rgba(10,14,20,.75);
     border:1px solid var(--glass-border);
     backdrop-filter:blur(20px);
@@ -214,10 +323,21 @@
     border-radius:16px;
     padding:12px 16px;
     margin-bottom:20px;
+    flex-wrap:wrap;
   }
-  .progress-track{flex:1;height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}
+  .progress-track{flex:1;min-width:60px;height:8px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;}
   .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s ease;}
   .progress-label{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;}
+  .rest-durations{display:flex;gap:4px;}
+  .dur-btn{
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--glass-border);
+    color:var(--muted);
+    font:inherit;font-size:11px;font-weight:700;
+    padding:6px 9px;border-radius:9px;
+    cursor:pointer;
+  }
+  .dur-btn.active{color:var(--bg-1);background:var(--accent);border-color:transparent;}
   .timer-btn{
     background:var(--glass);
     border:1px solid var(--glass-border);
@@ -263,6 +383,7 @@
 
   @media(max-width:520px){
     .weight-field{margin-left:0;}
+    .export-btn{margin-left:0;}
   }
 </style>
 </head>
@@ -272,16 +393,34 @@
   <h1>Full Body Split</h1>
   <p class="lede">Same weekly volume as the old 3-day plan (27 sets total), just spread across five short 15–25 min sessions so it's easier to show up every day.</p>
 
+  <div class="streak">
+    <span class="streak-label">This week</span>
+    <div class="streak-dots" id="streakDots"></div>
+  </div>
+
   <div class="days" id="days"></div>
 
   <div class="modes">
     <button class="mode-btn active" data-mode="overview">Overview</button>
     <button class="mode-btn" data-mode="track">Track Workout</button>
+    <button class="export-btn" id="exportBtn">📋 Export Log</button>
+  </div>
+
+  <div class="export-panel" id="exportPanel">
+    <textarea id="exportText" readonly></textarea>
+    <div class="export-actions">
+      <button class="copy-btn" id="copyBtn">Copy to Clipboard</button>
+      <span class="copy-status" id="copyStatus"></span>
+    </div>
   </div>
 
   <div id="progressBar" class="progress-bar" style="display:none">
     <div class="progress-label" id="progressLabel">0 / 0 sets</div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="rest-durations">
+      <button class="dur-btn" data-dur="60">60s</button>
+      <button class="dur-btn" data-dur="90">90s</button>
+    </div>
     <button class="timer-btn" id="timerBtn">⏱ Rest</button>
   </div>
 
@@ -299,7 +438,7 @@
     <span><span class="dot" style="background:var(--core);color:var(--core)"></span>Core &amp; grip</span>
   </div>
 
-  <p class="note">Rest 60–90 seconds between sets. In <b>Track</b> mode, tap a set box after finishing it and hit <b>⏱ Rest</b> to start a countdown. When you can hit the top of a rep range with good form on every set, bump the weight up next time.</p>
+  <p class="note">Rest 60–90 seconds between sets — pick your default above, and it starts automatically when you check off a set. Tap the ⓘ on any exercise for form cues. When you can hit the top of a rep range with good form on every set, bump the weight up next time.</p>
 
   <footer>Full Body Workout · 5-Day Split</footer>
 </div>
@@ -307,32 +446,50 @@
 <script>
 const PLAN = [
   { day:"Mon", full:"Monday", title:"Legs + Core", exercises:[
-    { name:"Leg Press", tag:"Legs", sets:3, reps:"8–12", weight:"~70–90 lb" },
-    { name:"Leg Curl", tag:"Legs", sets:3, reps:"8–12", weight:"~30 lb" },
-    { name:"Plank", tag:"Core", sets:2, reps:"20–30 sec", weight:"Bodyweight" },
+    { name:"Leg Press", tag:"Legs", sets:3, reps:"8–12", weight:"~70–90 lb", step:10, bodyweight:false,
+      cues:["Feet shoulder-width on the plate", "Lower until knees hit about 90°, don't slam the lockout at the top", "Push through your heels, not your toes"] },
+    { name:"Leg Curl", tag:"Legs", sets:3, reps:"8–12", weight:"~30 lb", step:5, bodyweight:false,
+      cues:["Pad sits just above your heel", "Squeeze hard at the top, then lower with control", "Keep your hips flat on the pad"] },
+    { name:"Plank", tag:"Core", sets:2, reps:"20–30 sec", weight:"Bodyweight", step:0, bodyweight:true,
+      cues:["Elbows stacked under your shoulders", "Squeeze your glutes and keep hips level", "Breathe normally — don't hold your breath"] },
   ]},
   { day:"Tue", full:"Tuesday", title:"Push", exercises:[
-    { name:"Machine Chest Press", tag:"Push", sets:3, reps:"8–12", weight:"~30 lb" },
-    { name:"Dumbbell Lateral Raise", tag:"Shoulders", sets:3, reps:"10–15", weight:"5 lb each" },
-    { name:"Farmer Carry", tag:"Core / Grip", sets:2, reps:"20–30 sec", weight:"~15–20 lb each" },
+    { name:"Machine Chest Press", tag:"Push", sets:3, reps:"8–12", weight:"~30 lb", step:5, bodyweight:false,
+      cues:["Handles at chest height", "Press until arms are almost straight — don't lock elbows hard", "Squeeze your chest at the top"] },
+    { name:"Dumbbell Lateral Raise", tag:"Shoulders", sets:3, reps:"10–15", weight:"5 lb each", step:2.5, bodyweight:false,
+      cues:["Slight bend in your elbows the whole time", "Raise to shoulder height, leading with your elbows", "Lower with control — don't swing the weight up"] },
+    { name:"Farmer Carry", tag:"Core / Grip", sets:2, reps:"20–30 sec", weight:"~15–20 lb each", step:5, bodyweight:false,
+      cues:["Stand tall, shoulders pulled back", "Grip hard and walk with short, controlled steps", "Brace your core the entire carry"] },
   ]},
   { day:"Wed", full:"Wednesday", title:"Pull", exercises:[
-    { name:"Lat Pulldown", tag:"Pull", sets:3, reps:"8–12", weight:"~30–40 lb" },
-    { name:"Seated Row", tag:"Pull", sets:3, reps:"8–12", weight:"~40 lb" },
-    { name:"Rear-Delt Fly Machine", tag:"Shoulders", sets:3, reps:"10–15", weight:"~15–25 lb" },
+    { name:"Lat Pulldown", tag:"Pull", sets:3, reps:"8–12", weight:"~30–40 lb", step:5, bodyweight:false,
+      cues:["Grip slightly wider than shoulder width", "Pull to your upper chest, leaning back slightly", "Think 'elbows down' rather than 'hands down'"] },
+    { name:"Seated Row", tag:"Pull", sets:3, reps:"8–12", weight:"~40 lb", step:5, bodyweight:false,
+      cues:["Chest up, pull the handle to your stomach", "Squeeze your shoulder blades together at the end", "Control the return — don't let it snap back"] },
+    { name:"Rear-Delt Fly Machine", tag:"Shoulders", sets:3, reps:"10–15", weight:"~15–25 lb", step:5, bodyweight:false,
+      cues:["Chest against the pad", "Squeeze your shoulder blades as your arms open", "Keep a slight bend in your elbows"] },
   ]},
   { day:"Thu", full:"Thursday", title:"Legs + Push", exercises:[
-    { name:"Leg Press", tag:"Legs", sets:3, reps:"8–12", weight:"~70–90 lb" },
-    { name:"Leg Curl", tag:"Legs", sets:3, reps:"8–12", weight:"~30 lb" },
-    { name:"Machine Chest Press", tag:"Push", sets:3, reps:"8–12", weight:"~30 lb" },
-    { name:"Plank", tag:"Core", sets:2, reps:"20–30 sec", weight:"Bodyweight" },
+    { name:"Leg Press", tag:"Legs", sets:3, reps:"8–12", weight:"~70–90 lb", step:10, bodyweight:false,
+      cues:["Feet shoulder-width on the plate", "Lower until knees hit about 90°, don't slam the lockout at the top", "Push through your heels, not your toes"] },
+    { name:"Leg Curl", tag:"Legs", sets:3, reps:"8–12", weight:"~30 lb", step:5, bodyweight:false,
+      cues:["Pad sits just above your heel", "Squeeze hard at the top, then lower with control", "Keep your hips flat on the pad"] },
+    { name:"Machine Chest Press", tag:"Push", sets:3, reps:"8–12", weight:"~30 lb", step:5, bodyweight:false,
+      cues:["Handles at chest height", "Press until arms are almost straight — don't lock elbows hard", "Squeeze your chest at the top"] },
+    { name:"Plank", tag:"Core", sets:2, reps:"20–30 sec", weight:"Bodyweight", step:0, bodyweight:true,
+      cues:["Elbows stacked under your shoulders", "Squeeze your glutes and keep hips level", "Breathe normally — don't hold your breath"] },
   ]},
   { day:"Fri", full:"Friday", title:"Pull + Shoulders", exercises:[
-    { name:"Lat Pulldown", tag:"Pull", sets:3, reps:"8–12", weight:"~30–40 lb" },
-    { name:"Seated Row", tag:"Pull", sets:3, reps:"8–12", weight:"~40 lb" },
-    { name:"Rear-Delt Fly Machine", tag:"Shoulders", sets:3, reps:"10–15", weight:"~15–25 lb" },
-    { name:"Dumbbell Lateral Raise", tag:"Shoulders", sets:3, reps:"10–15", weight:"5 lb each" },
-    { name:"Farmer Carry", tag:"Core / Grip", sets:2, reps:"20–30 sec", weight:"~15–20 lb each" },
+    { name:"Lat Pulldown", tag:"Pull", sets:3, reps:"8–12", weight:"~30–40 lb", step:5, bodyweight:false,
+      cues:["Grip slightly wider than shoulder width", "Pull to your upper chest, leaning back slightly", "Think 'elbows down' rather than 'hands down'"] },
+    { name:"Seated Row", tag:"Pull", sets:3, reps:"8–12", weight:"~40 lb", step:5, bodyweight:false,
+      cues:["Chest up, pull the handle to your stomach", "Squeeze your shoulder blades together at the end", "Control the return — don't let it snap back"] },
+    { name:"Rear-Delt Fly Machine", tag:"Shoulders", sets:3, reps:"10–15", weight:"~15–25 lb", step:5, bodyweight:false,
+      cues:["Chest against the pad", "Squeeze your shoulder blades as your arms open", "Keep a slight bend in your elbows"] },
+    { name:"Dumbbell Lateral Raise", tag:"Shoulders", sets:3, reps:"10–15", weight:"5 lb each", step:2.5, bodyweight:false,
+      cues:["Slight bend in your elbows the whole time", "Raise to shoulder height, leading with your elbows", "Lower with control — don't swing the weight up"] },
+    { name:"Farmer Carry", tag:"Core / Grip", sets:2, reps:"20–30 sec", weight:"~15–20 lb each", step:5, bodyweight:false,
+      cues:["Stand tall, shoulders pulled back", "Grip hard and walk with short, controlled steps", "Brace your core the entire carry"] },
   ]},
 ];
 
@@ -340,9 +497,11 @@ const TAG_VAR = {
   "Legs":"--legs", "Push":"--push", "Pull":"--pull",
   "Shoulders":"--pull", "Core":"--core", "Core / Grip":"--core"
 };
+const DAY_OFFSET = { Mon:0, Tue:1, Wed:2, Thu:3, Fri:4 };
 
 let activeDayIdx = new Date().getDay() >= 1 && new Date().getDay() <= 5 ? new Date().getDay() - 1 : 0;
 let mode = "overview";
+const expandedCues = new Set();
 
 const daysEl = document.getElementById("days");
 const listEl = document.getElementById("list");
@@ -352,19 +511,44 @@ const progressBar = document.getElementById("progressBar");
 const progressFill = document.getElementById("progressFill");
 const progressLabel = document.getElementById("progressLabel");
 const timerBtn = document.getElementById("timerBtn");
+const streakDotsEl = document.getElementById("streakDots");
+const exportBtn = document.getElementById("exportBtn");
+const exportPanel = document.getElementById("exportPanel");
+const exportText = document.getElementById("exportText");
+const copyBtn = document.getElementById("copyBtn");
+const copyStatus = document.getElementById("copyStatus");
 
-function todayKey(dayCode){
-  const d = new Date();
-  const monday = new Date(d);
-  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-  return `track:${monday.toISOString().slice(0,10)}:${dayCode}`;
-}
-function weightKey(dayCode, exName){ return `weight:${dayCode}:${exName}`; }
-
+/* ---------- storage ---------- */
 // In-memory cache is the source of truth; localStorage is best-effort persistence
 // (fails silently in private browsing / sandboxed origins).
 const trackCache = {};
 const weightCache = {};
+let restSeconds = 90;
+try{ restSeconds = parseInt(localStorage.getItem("restSeconds"), 10) || 90; }catch(e){}
+
+function mondayOf(d){
+  const m = new Date(d);
+  m.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return m;
+}
+function isoDate(d){ return d.toISOString().slice(0,10); }
+function currentMonday(){ return isoDate(mondayOf(new Date())); }
+function todayKey(dayCode){ return `track:${currentMonday()}:${dayCode}`; }
+function weightKey(dayCode, exName){ return `weight:${dayCode}:${exName}`; }
+function dateForRecordKey(monday, dayCode){
+  const d = new Date(monday + "T00:00:00");
+  d.setDate(d.getDate() + (DAY_OFFSET[dayCode] || 0));
+  return d;
+}
+function fmtDate(d){
+  return d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
+}
+
+function normalizeExRecord(entry){
+  if(Array.isArray(entry)) return { sets: entry, weight: undefined };
+  if(entry && typeof entry === "object") return { sets: entry.sets || [], weight: entry.weight };
+  return { sets: [], weight: undefined };
+}
 
 function loadTrack(dayCode){
   const key = todayKey(dayCode);
@@ -395,6 +579,63 @@ function saveWeight(dayCode, exName, val){
   try{ localStorage.setItem(key, val); }catch(e){}
 }
 
+function scanAllTrackRecords(){
+  const map = {};
+  try{
+    Object.keys(localStorage).forEach(k => {
+      if(!k.startsWith("track:")) return;
+      try{ map[k] = JSON.parse(localStorage.getItem(k)); }catch(e){}
+    });
+  }catch(e){}
+  Object.keys(trackCache).forEach(k => { map[k] = trackCache[k]; });
+  return map;
+}
+
+function getLastSession(dayCode, exName, excludeKey){
+  const map = scanAllTrackRecords();
+  let best = null;
+  Object.keys(map).forEach(k => {
+    if(k === excludeKey) return;
+    const parts = k.split(":");
+    if(parts.length !== 3) return;
+    const monday = parts[1], dc = parts[2];
+    if(dc !== dayCode) return;
+    const rec = normalizeExRecord((map[k] || {})[exName]);
+    const doneCount = rec.sets.filter(Boolean).length;
+    if(doneCount === 0) return;
+    const date = dateForRecordKey(monday, dc);
+    if(!best || date > best.date){
+      best = { date, weight: rec.weight, doneCount, total: rec.sets.length };
+    }
+  });
+  return best;
+}
+
+/* ---------- streak ---------- */
+function renderStreak(){
+  streakDotsEl.innerHTML = "";
+  const monday = currentMonday();
+  const map = scanAllTrackRecords();
+  const todayIdx = new Date().getDay() >= 1 && new Date().getDay() <= 5 ? new Date().getDay() - 1 : -1;
+  PLAN.forEach((d, i) => {
+    const key = `track:${monday}:${d.day}`;
+    const rec = map[key] || {};
+    let done = 0, total = 0;
+    d.exercises.forEach(ex => {
+      const r = normalizeExRecord(rec[ex.name]);
+      total += ex.sets;
+      done += r.sets.filter(Boolean).length;
+    });
+    const pct = total ? Math.round((done/total)*100) : 0;
+    const dot = document.createElement("div");
+    dot.className = "streak-dot" + (i === todayIdx ? " today" : "");
+    dot.style.setProperty("--fill", pct + "%");
+    dot.title = `${d.day}: ${done}/${total} sets`;
+    streakDotsEl.appendChild(dot);
+  });
+}
+
+/* ---------- rendering ---------- */
 function renderDayTabs(){
   daysEl.innerHTML = "";
   PLAN.forEach((d, i) => {
@@ -408,15 +649,18 @@ function renderDayTabs(){
 
 function render(){
   renderDayTabs();
+  renderStreak();
   const day = PLAN[activeDayIdx];
   dayTitleEl.textContent = `${day.full} · ${day.title}`;
   const totalSets = day.exercises.reduce((a,e) => a + e.sets, 0);
   dayMetaEl.textContent = `${day.exercises.length} exercises · ${totalSets} sets · ~15–25 min`;
 
   listEl.innerHTML = "";
+  const curKey = todayKey(day.day);
   const track = mode === "track" ? loadTrack(day.day) : null;
 
   day.exercises.forEach((ex, i) => {
+    const cueId = `${day.day}-${i}`;
     const card = document.createElement("div");
     card.className = "ex";
     card.style.setProperty("--tag", `var(${TAG_VAR[ex.tag] || "--core"})`);
@@ -425,10 +669,27 @@ function render(){
     top.className = "ex-top";
     top.innerHTML = `
       <div class="num">${i+1}</div>
-      <div class="mid"><div class="name">${ex.name}</div><span class="tag">${ex.tag}</span></div>
+      <div class="mid">
+        <div class="name-row">
+          <div class="name">${ex.name}</div>
+          <button class="info-btn${expandedCues.has(cueId) ? " open" : ""}" data-cue="${cueId}">i</button>
+        </div>
+        <span class="tag">${ex.tag}</span>
+      </div>
       <div class="stats"><div class="reps">${ex.sets} × ${ex.reps}</div><div class="wt">${ex.weight}</div></div>
     `;
     card.appendChild(top);
+
+    const cuesEl = document.createElement("ul");
+    cuesEl.className = "cues" + (expandedCues.has(cueId) ? " open" : "");
+    cuesEl.innerHTML = ex.cues.map(c => `<li>${c}</li>`).join("");
+    card.appendChild(cuesEl);
+
+    top.querySelector(".info-btn").onclick = () => {
+      if(expandedCues.has(cueId)) expandedCues.delete(cueId);
+      else expandedCues.add(cueId);
+      render();
+    };
 
     if(mode === "track"){
       const row = document.createElement("div");
@@ -437,35 +698,78 @@ function render(){
       const sets = document.createElement("div");
       sets.className = "sets";
       const exKey = ex.name;
-      const done = track[exKey] || [];
+      const exRecord = normalizeExRecord(track[exKey]);
+      const done = exRecord.sets;
       for(let s=0; s<ex.sets; s++){
         const box = document.createElement("button");
         box.className = "set-box" + (done[s] ? " done" : "");
         box.textContent = s+1;
         box.onclick = () => {
           const t = loadTrack(day.day);
-          const arr = t[exKey] || [];
-          arr[s] = !arr[s];
-          t[exKey] = arr;
+          const rec = normalizeExRecord(t[exKey]);
+          const wasDone = !!rec.sets[s];
+          rec.sets[s] = !wasDone;
+          t[exKey] = rec;
           saveTrack(day.day, t);
           render();
+          if(!wasDone) startTimer();
         };
         sets.appendChild(box);
       }
       row.appendChild(sets);
 
-      const wf = document.createElement("div");
-      wf.className = "weight-field";
-      wf.innerHTML = `<label>lb</label>`;
-      const input = document.createElement("input");
-      input.type = "text";
-      input.inputMode = "decimal";
-      input.value = loadWeight(day.day, ex.name, ex.weight.replace(/[^0-9.–-]/g,"") || "");
-      input.oninput = () => saveWeight(day.day, ex.name, input.value);
-      wf.appendChild(input);
-      row.appendChild(wf);
+      if(!ex.bodyweight){
+        const wf = document.createElement("div");
+        wf.className = "weight-field";
+        const minus = document.createElement("button");
+        minus.className = "step-btn";
+        minus.textContent = "−";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.inputMode = "decimal";
+        const initial = exRecord.weight !== undefined
+          ? exRecord.weight
+          : loadWeight(day.day, ex.name, (ex.weight.match(/[\d.]+/) || [""])[0]);
+        input.value = initial;
+        const plus = document.createElement("button");
+        plus.className = "step-btn";
+        plus.textContent = "+";
+
+        function commit(newVal){
+          input.value = newVal;
+          saveWeight(day.day, ex.name, newVal);
+          const t = loadTrack(day.day);
+          const rec = normalizeExRecord(t[exKey]);
+          rec.weight = newVal;
+          t[exKey] = rec;
+          saveTrack(day.day, t);
+        }
+        minus.onclick = () => {
+          const cur = parseFloat(input.value) || 0;
+          commit(String(Math.max(0, cur - ex.step)));
+        };
+        plus.onclick = () => {
+          const cur = parseFloat(input.value) || 0;
+          commit(String(cur + ex.step));
+        };
+        input.oninput = () => commit(input.value);
+
+        wf.appendChild(minus);
+        wf.appendChild(input);
+        wf.appendChild(plus);
+        row.appendChild(wf);
+      }
 
       card.appendChild(row);
+
+      const last = getLastSession(day.day, ex.name, curKey);
+      if(last){
+        const lt = document.createElement("div");
+        lt.className = "last-time";
+        const weightPart = last.weight ? `<b>${last.weight} lb</b> · ` : "";
+        lt.innerHTML = `Last time (${fmtDate(last.date)}): ${weightPart}${last.doneCount}/${last.total} sets`;
+        card.appendChild(lt);
+      }
     }
 
     listEl.appendChild(card);
@@ -475,14 +779,18 @@ function render(){
     progressBar.style.display = "flex";
     let doneCount = 0;
     day.exercises.forEach(ex => {
-      const arr = track[ex.name] || [];
-      doneCount += arr.filter(Boolean).length;
+      const rec = normalizeExRecord(track[ex.name]);
+      doneCount += rec.sets.filter(Boolean).length;
     });
     progressLabel.textContent = `${doneCount} / ${totalSets} sets`;
     progressFill.style.width = totalSets ? `${(doneCount/totalSets)*100}%` : "0%";
   } else {
     progressBar.style.display = "none";
   }
+
+  document.querySelectorAll(".dur-btn").forEach(b => {
+    b.classList.toggle("active", parseInt(b.dataset.dur,10) === restSeconds);
+  });
 }
 
 document.querySelectorAll(".mode-btn").forEach(btn => {
@@ -493,30 +801,125 @@ document.querySelectorAll(".mode-btn").forEach(btn => {
   };
 });
 
+document.querySelectorAll(".dur-btn").forEach(btn => {
+  btn.onclick = () => {
+    restSeconds = parseInt(btn.dataset.dur, 10);
+    try{ localStorage.setItem("restSeconds", String(restSeconds)); }catch(e){}
+    document.querySelectorAll(".dur-btn").forEach(b => b.classList.toggle("active", b === btn));
+  };
+});
+
+/* ---------- rest timer ---------- */
 let timerInterval = null;
-timerBtn.onclick = () => {
-  if(timerInterval){
-    clearInterval(timerInterval);
-    timerInterval = null;
-    timerBtn.textContent = "⏱ Rest";
-    timerBtn.classList.remove("running");
-    return;
-  }
-  let remaining = 75;
+function beep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.value = 880;
+    g.gain.setValueAtTime(0.001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.55);
+  }catch(e){}
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  timerBtn.textContent = "⏱ Rest";
+  timerBtn.classList.remove("running");
+}
+function startTimer(){
+  stopTimer();
+  let remaining = restSeconds;
   timerBtn.classList.add("running");
   timerBtn.textContent = `⏱ ${remaining}s`;
   timerInterval = setInterval(() => {
     remaining--;
     if(remaining <= 0){
-      clearInterval(timerInterval);
-      timerInterval = null;
-      timerBtn.textContent = "⏱ Rest";
-      timerBtn.classList.remove("running");
+      stopTimer();
       if(navigator.vibrate) navigator.vibrate([120,60,120]);
+      beep();
       return;
     }
     timerBtn.textContent = `⏱ ${remaining}s`;
   }, 1000);
+}
+timerBtn.onclick = () => {
+  if(timerInterval) stopTimer();
+  else startTimer();
+};
+
+/* ---------- export ---------- */
+function buildExportText(){
+  const map = scanAllTrackRecords();
+  const weekMap = {};
+  Object.keys(map).forEach(k => {
+    const parts = k.split(":");
+    if(parts.length !== 3) return;
+    const monday = parts[1], dayCode = parts[2];
+    const planDay = PLAN.find(d => d.day === dayCode);
+    if(!planDay) return;
+    const rec = map[k];
+    const hasAny = planDay.exercises.some(ex => normalizeExRecord(rec[ex.name]).sets.some(Boolean));
+    if(!hasAny) return;
+    weekMap[monday] = weekMap[monday] || [];
+    weekMap[monday].push({ dayCode, planDay, rec, date: dateForRecordKey(monday, dayCode) });
+  });
+
+  const weeks = Object.keys(weekMap).sort();
+  if(weeks.length === 0){
+    return "No completed sets logged yet. Check off sets in Track mode and they'll show up here.";
+  }
+
+  let out = "Full Body Workout — Training Log\n";
+  out += `Exported ${new Date().toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})}\n`;
+
+  weeks.forEach(monday => {
+    out += `\nWeek of ${fmtDate(new Date(monday + "T00:00:00"))}\n`;
+    const days = weekMap[monday].sort((a,b) => a.date - b.date);
+    days.forEach(({ planDay, rec, date }) => {
+      out += `  ${planDay.day} ${fmtDate(date)} (${planDay.title})\n`;
+      planDay.exercises.forEach(ex => {
+        const r = normalizeExRecord(rec[ex.name]);
+        const done = r.sets.filter(Boolean).length;
+        if(done === 0) return;
+        const weightPart = r.weight ? ` @ ${r.weight} lb` : "";
+        out += `    ${ex.name} — ${done}/${ex.sets} sets${weightPart}\n`;
+      });
+    });
+  });
+
+  return out;
+}
+
+exportBtn.onclick = () => {
+  const opening = !exportPanel.classList.contains("open");
+  exportPanel.classList.toggle("open");
+  if(opening){
+    exportText.value = buildExportText();
+    copyStatus.textContent = "";
+  }
+};
+
+copyBtn.onclick = async () => {
+  const text = exportText.value;
+  let copied = false;
+  try{
+    await navigator.clipboard.writeText(text);
+    copied = true;
+  }catch(e){
+    try{
+      exportText.focus();
+      exportText.select();
+      copied = document.execCommand("copy");
+    }catch(e2){}
+  }
+  copyStatus.textContent = copied ? "Copied!" : "Select the text above and copy manually";
+  if(copied) setTimeout(() => { copyStatus.textContent = ""; }, 2000);
 };
 
 render();
